@@ -114,10 +114,7 @@ def IGMM(y, kurtosis, tol=1e-7, maxnpepochs=10000):
         delta = compute_delta_GMM(z, kurtosis, initial_delta=prev_delta)
         u = lambertWdelta(z, delta)
         x = u * std + mu
-        if delta >= 1.:
-            mu, std = np.median(x), median_abs_deviation(x)
-        else:
-            mu, std = np.mean(x), np.std(x)
+        mu, std = np.mean(x), np.std(x)
         k += 1
 
     return mu, std, delta
