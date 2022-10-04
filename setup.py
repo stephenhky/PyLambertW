@@ -36,6 +36,6 @@ setup(name='pylambertw',
       package_dir={'pylambertw': 'pylambertw'},
       python_requires='>=3.6',
       install_requires=install_requirements(),
-      scripts=['script/simulate_heavytails.py'],
+      scripts=['script/simulate_heavytails'],
       test_suite="test",
       zip_safe=False)
