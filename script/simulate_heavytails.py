@@ -2,6 +2,9 @@
 from time import time
 from multiprocessing import Pool
 from functools import partial
+from argparse import ArgumentParser
+import os
+import logging
 
 import numpy as np
 import pandas as pd
@@ -34,11 +37,23 @@ def simulate_single(parameter, nbdata):
         'inferred_delta': inferred_delta,
         'duration': endtime - starttime
     }
-    print(results)
+    logging.info(results)
     return results
 
 
+def get_argparser():
+    argparser = ArgumentParser(description='Simulate heavy tail')
+    argparser.add_argument('outputexcelfile', help='Output Excel File')
+    argparser.add_argument('--nbpools', default=10, type=int, help='Number of pool workers (default: 10)')
+    return argparser
+
+
 if __name__ == '__main__':
+    args = get_argparser().parse_args()
+    excelfilepath = args.outputexcelfile
+    if not os.path.isdir(os.path.dirname(excelfilepath)):
+        raise FileNotFoundError('Directory {} does not exist!'.format(os.path.dirname(excelfilepath)))
+
     deltas = [0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0, 1.1, 1.2, 1.3, 1.4, 1.5]
     stat_parameters = [
         {'mu': 0.0, 'sigma': 1.0},
@@ -65,4 +80,4 @@ if __name__ == '__main__':
     results = p.map(partial(simulate_single, nbdata=10000), parameters)
 
     df = pd.DataFrame.from_dict(results)
-    df.to_excel('LambertSimulations.xlsx')
+    df.to_excel(excelfilepath)
