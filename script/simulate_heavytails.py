@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 
 from time import time
 from multiprocessing import Pool
@@ -76,7 +77,7 @@ if __name__ == '__main__':
             copied_param['delta'] = delta
             parameters.append(copied_param)
 
-    p = Pool(10)
+    p = Pool(args.nbpools)
     results = p.map(partial(simulate_single, nbdata=10000), parameters)
 
     df = pd.DataFrame.from_dict(results)
