@@ -97,10 +97,8 @@ def compute_delta_GMM(z, kurtosis, initial_delta=None, tol=1e-7):
     return sol.x[0]
 
 
-def IGMM(y, kurtosis, tol=1e-7, maxnpepochs=10000):
-    # delta = compute_delta_Taylor(y)
+def IGMM(y, kurtosis, tol=1e-7, maxnpepochs=10000, returnnbsteps=False):
     mu = np.median(y)
-    # std = np.std(y) * (1 - 2 * delta) ** 3
     std = median_abs_deviation(y) + 1e-3 * np.std(y)
     delta = compute_delta_Taylor((y-mu)/std)
 
@@ -117,4 +115,7 @@ def IGMM(y, kurtosis, tol=1e-7, maxnpepochs=10000):
         mu, std = np.mean(x), np.std(x)
         k += 1
 
-    return mu, std, delta
+    if returnnbsteps:
+        return mu, std, delta, k
+    else:
+        return mu, std, delta
