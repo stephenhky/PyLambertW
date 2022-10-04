@@ -98,9 +98,7 @@ def compute_delta_GMM(z, kurtosis, initial_delta=None, tol=1e-7):
 
 
 def IGMM(y, kurtosis, tol=1e-7, maxnpepochs=10000):
-    # delta = compute_delta_Taylor(y)
     mu = np.median(y)
-    # std = np.std(y) * (1 - 2 * delta) ** 3
     std = median_abs_deviation(y) + 1e-3 * np.std(y)
     delta = compute_delta_Taylor((y-mu)/std)
 
