@@ -23,3 +23,12 @@ class GaussianLamberter:
     def fit_transform(self, X, maxnbepochs=100000):
         self.fit(X, maxnbepochs=maxnbepochs)
         return self.transform(X)
+
+    def __str__(self):
+        displayedstr = 'GaussianLamberter: mu={}, sigma={}, delta={}; (number of steps: {})'.format(
+            self.mu,
+            self.sigma,
+            self.delta,
+            'None' if self.nbsteps is None else self.nbsteps
+        )
+        return displayedstr
