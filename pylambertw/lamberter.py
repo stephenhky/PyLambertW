@@ -32,3 +32,6 @@ class GaussianLamberter:
             'None' if self.nbsteps is None else self.nbsteps
         )
         return displayedstr
+
+    def __repr__(self):
+        return super(GaussianLamberter, self).__repr__() + '\n' + self.__str__()
