@@ -11,7 +11,7 @@ def install_requirements():
 
 
 setup(name='pylambertw',
-      version='0.0.1a1',
+      version='0.0.1',
       description="LambertW x Gaussian",
       long_description=package_description(),
       long_description_content_type='text/markdown',
