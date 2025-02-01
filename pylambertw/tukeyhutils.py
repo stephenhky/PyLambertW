@@ -15,6 +15,7 @@ def tukeyh(x, h):
     return x*np.exp(0.5*h*x*x)
 
 
+@nb.njit(nb.float64[:](nb.float64[:], nb.float64))
 def lambertWdelta(z, delta):
     if delta != 0.0:
         return np.sign(z) * np.sqrt(np.real(lambertw(delta*z*z, 0))/delta)
@@ -71,6 +72,7 @@ def compute_kurtosis(x):
     return np.sum(np.square(y)) / (n * std*std*std*std)
 
 
+@nb.njit(nb.float64(nb.float64[:]))
 def compute_delta_Taylor(z):
     kurtosis = compute_kurtosis(z)
     disc = 66*kurtosis - 162
