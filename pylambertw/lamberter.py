@@ -1,13 +1,14 @@
 
+from dataclasses import dataclass
+
 from .tukeyhutils import IGMM, heavytail2f
 
 
+@dataclass
 class GaussianLamberter:
-    def __init__(self, mu=0.0, sigma=1.0, delta=0.25):
-        self.mu = mu
-        self.sigma = sigma
-        self.delta = delta
-        self.nbsteps = None
+    mu: float = 0.0
+    sigma: float = 1.0
+    delta: float = 0.25
 
     def fit(self, X, maxnbepochs=100000):
         mu, std, delta, nbsteps = IGMM(X, 3.0, maxnpepochs=maxnbepochs, returnnbsteps=True)
