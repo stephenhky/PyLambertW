@@ -1,0 +1,41 @@
+[build-system]
+requires = ["setuptools", "setuptools-scm", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pylambertw"
+version = "0.0.2a1"
+authors = [
+    {name = "Kwan Yuet Stephen Ho", email = "stephenhky@yahoo.com.hk"}
+]
+description = "LambertW x Gaussian"
+readme = {file = "README.md", content-type = "text/markdown"}
+license = {text = "MIT"}
+keywords = ["Gaussian", "normal distribution", "heavy tails"]
+requires-python = ">=3.7"
+classifiers = [
+    "Topic :: Scientific/Engineering :: Mathematics",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Intended Audience :: Science/Research",
+    "Intended Audience :: Developers",
+]
+dependencies = ["numpy", "scipy", "numba", "pandas"]
+
+[project.urls]
+Repository = "https://github.com/stephenhky/PyLamertW"
+Issues = "https://github.com/stephenhky/PyLamertW/issues"
+
+[tool.setuptools]
+packages = ["pylambertw"]
+zip-safe = false
+
+[project.optional-dependencies]
+test = ["unittest"]
