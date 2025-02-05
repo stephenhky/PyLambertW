@@ -15,7 +15,6 @@ def tukeyh(x, h):
     return x*np.exp(0.5*h*x*x)
 
 
-@nb.njit(nb.float64[:](nb.float64[:], nb.float64))
 def lambertWdelta(z, delta):
     if delta != 0.0:
         return np.sign(z) * np.sqrt(np.real(lambertw(delta*z*z, 0))/delta)
