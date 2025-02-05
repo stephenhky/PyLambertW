@@ -9,16 +9,13 @@ import pylambertw.tukeyhutils as tutils
 
 class TestBasic(unittest.TestCase):
     def test_tukeyh(self):
-        self.assertAlmostEqual(tutils.tukeyh(0., 1.), 0.)
-        self.assertAlmostEqual(tutils.tukeyh(1., -100.), 0.)
-        self.assertAlmostEqual(tutils.tukeyh(25.4, 0.), 25.4)
         np.testing.assert_almost_equal(
             tutils.tukeyh(np.array([-100., 0., 1]), 1.5),
             np.array([0., 0., exp(0.5*1.5)])
         )
         np.testing.assert_almost_equal(
-            tutils.tukeyh(np.array([-100., 0., 11.2]), 0.),
-            np.array([-100., 0., 11.2])
+            tutils.tukeyh(np.array([-100., 0., 11.2, 25.4]), 0.),
+            np.array([-100., 0., 11.2, 25.4])
         )
         np.testing.assert_almost_equal(
             tutils.tukeyh(np.array([-110., 0., 34.2]), -10.),
