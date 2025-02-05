@@ -19,7 +19,7 @@ class TestBasic(unittest.TestCase):
         )
         np.testing.assert_almost_equal(
             tutils.tukeyh(np.array([-110., 0., 34.2]), -10.),
-            np.array([0., 0., 0.])
+            np.array([-np.inf, 0., 0.])
         )
 
 
