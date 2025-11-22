@@ -9,6 +9,7 @@ class GaussianLamberter:
     mu: float = 0.0
     sigma: float = 1.0
     delta: float = 0.25
+    nbsteps: int = None
 
     def fit(self, X, maxnbepochs=100000):
         mu, std, delta, nbsteps = IGMM(X, 3.0, maxnpepochs=maxnbepochs, returnnbsteps=True)
