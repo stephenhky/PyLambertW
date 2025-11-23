@@ -20,7 +20,7 @@ class GaussianLamberter:
         return self
 
     def transform(self, X):
-        return heavytail2f(X, self.delta, mux=self.mu, sigmax=self.sigma)
+        return heavytail2f(X, self.delta, self.mu, self.sigma)
 
     def fit_transform(self, X, maxnbepochs=100000):
         self.fit(X, maxnbepochs=maxnbepochs)

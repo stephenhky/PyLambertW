@@ -1,8 +1,10 @@
 
 import logging
 from functools import partial
+from typing import Optional, Union
 
 import numpy as np
+import numpy.typing as npt
 from scipy.optimize import minimize, Bounds
 from scipy.special import lambertw
 from scipy.stats import norm as normaldist
@@ -11,11 +13,12 @@ import numba as nb
 
 
 @nb.njit(nb.float64[:](nb.float64[:], nb.float64))
-def tukeyh(x, h):
+def tukeyh(x: npt.NDArray[np.float64], h: float) -> npt.NDArray[np.float64]:
     return x*np.exp(0.5*h*x*x)
 
 
-def lambertWdelta(z, delta):
+@nb.njit(nb.float64[:](nb.float64[:], nb.float64))
+def lambertWdelta(z: npt.NDArray[np.float64], delta: float) -> npt.NDArray[np.float64]:
     if delta != 0.0:
         return np.sign(z) * np.sqrt(np.real(lambertw(delta*z*z, 0))/delta)
     else:
@@ -23,22 +26,25 @@ def lambertWdelta(z, delta):
 
 
 @nb.njit(nb.float64[:](nb.float64[:], nb.float64, nb.float64, nb.float64))
-def f2heavytail(u, delta, mux, sigmax):
+def f2heavytail(u: npt.NDArray[np.float64], delta: float, mux: float, sigmax: float) -> npt.NDArray[np.float64]:
     return tukeyh(u, delta)*sigmax + mux
 
 
-def heavytail2f(z, delta, mux=0.0, sigmax=1.0):
+@nb.njit(nb.float64[:](nb.float64[:], nb.float64, nb.float64, nb.float64))
+def heavytail2f(z: npt.NDArray[np.float64], delta: float, mux: float, sigmax: float) -> npt.NDArray[np.float64]:
     return lambertWdelta((z-mux)/sigmax, delta)*sigmax + mux
 
 
-def lambertWgaussiandist(y, delta, mux=0.0, sigmax=1.0):
+@nb.njit(nb.float64(nb.float64[:], nb.float64, nb.float64, nb.float64))
+def lambertWgaussiandist(y: npt.NDArray[np.float64], delta: float, mux: float, sigmax: float) -> float:
     z = (y-mux) / sigmax
     factor1 = normaldist.pdf(lambertWdelta(z, delta)*sigmax+mux)
     factor2 = lambertWdelta(z, delta) / z / (1 + np.real(lambertw(delta*z*z)))
     return np.sum(factor1*factor2)
 
 
-def derivative_lambertWgaussianMLE_z(zarray, delta):
+@nb.njit(nb.float64(nb.float64[:], nb.float64))
+def derivative_lambertWgaussianMLE_z(zarray: npt.NDArray[np.float64], delta: float) -> float:
     wdfcn = np.vectorize(partial(lambertWdelta, delta=delta))
     wdvaluessq = wdfcn(zarray)*wdfcn(zarray)
     denominator = 1 + np.real(lambertw(delta*zarray*zarray, 0))
@@ -47,7 +53,13 @@ def derivative_lambertWgaussianMLE_z(zarray, delta):
     )
 
 
-def find_delta_gradient_descent(zarray, learningrate=1e-6, delta0=0.5, tol=1e-6, maxnbepochs=10000):
+def find_delta_gradient_descent(
+        zarray: npt.NDArray[np.float64],
+        learningrate: float = 1e-6,
+        delta0: float = 0.5,
+        tol: float = 1e-6,
+        maxnbepochs: int = 10000
+) -> tuple[float, list[tuple[int, float]]]:
     intresults = []
 
     delta = delta0
@@ -63,7 +75,7 @@ def find_delta_gradient_descent(zarray, learningrate=1e-6, delta0=0.5, tol=1e-6,
 
 
 @nb.njit(nb.float64(nb.float64[:]))
-def compute_kurtosis(x):
+def compute_kurtosis(x: npt.NDArray[np.float64]) -> float:
     n = len(x)
     mean = np.mean(x)
     std = np.std(x)
@@ -72,7 +84,7 @@ def compute_kurtosis(x):
 
 
 @nb.njit(nb.float64(nb.float64[:]))
-def compute_delta_Taylor(z):
+def compute_delta_Taylor(z: npt.NDArray[np.float64]) -> float:
     kurtosis = compute_kurtosis(z)
     disc = 66*kurtosis - 162
     if disc > 0:
@@ -81,7 +93,12 @@ def compute_delta_Taylor(z):
         return 0.
 
 
-def compute_delta_GMM(z, kurtosis, initial_delta=None, tol=1e-7):
+def compute_delta_GMM(
+        z: npt.NDArray[np.float64],
+        kurtosis: float,
+        initial_delta: Optional[float] = None,
+        tol: float = 1e-7
+) -> float:
     if initial_delta is None:
         initial_delta = compute_delta_Taylor(z)
     initial_delta = np.array([initial_delta])
@@ -98,7 +115,13 @@ def compute_delta_GMM(z, kurtosis, initial_delta=None, tol=1e-7):
     return sol.x[0]
 
 
-def IGMM(y, kurtosis, tol=1e-7, maxnpepochs=10000, returnnbsteps=False):
+def IGMM(
+        y: npt.NDArray[np.float64],
+        kurtosis: float,
+        tol: float = 1e-7,
+        maxnpepochs: int = 10000,
+        returnnbsteps: bool = False
+) -> Union[tuple[float, float, float, int], tuple[float, float, float]]:
     mu = np.median(y)
     std = median_abs_deviation(y) + 1e-3 * np.std(y)
     delta = compute_delta_Taylor((y-mu)/std)
